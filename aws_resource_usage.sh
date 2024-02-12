@@ -17,10 +17,12 @@
 
 # Variables
 buckets="$(aws s3 ls)"
-instance_id="$(aws ec2 describe-instances | jq '.Reservations[].Instances[].InstanceId')"
+#instance_id="$(aws ec2 describe-instances | jq '.Reservations[].Instances[].InstanceId')"
+instances_state="$(aws ec2 describe-instances --query 'Reservations[].Instances[*].{InstanceId: InstanceId, State: State.Name, InstanceType: InstanceType}')"
 Lambda="$(aws lambda list-functions | jq '.Functions[].FunctionName')"
 iamusers="$(aws iam list-users | jq '.Users[].UserName')"
 vpcid="$(aws ec2 describe-vpcs | jq '.Vpcs[].VpcId')"
+#status="$(aws ec2 describe-instances | jq '.Reservations[].Instances[].State' | grep Name | cut -d: -f2 | cut -b 3-9)"
 
 # List s3 buckets 
 
@@ -47,13 +49,13 @@ echo "List EC2 instance ID"
 
 
 echo "###########################################################"
-if [[ -z "$instance_id" ]];
+if [[ -z "$instances_state" ]];
 then
     echo "No Instancs available"
 else
-    echo "Available Instances are"
+    echo "Instances Status as Below"
     echo "                                                            "
-    echo "$instance_id"
+    echo "$instances_state"
 fi
 
 
