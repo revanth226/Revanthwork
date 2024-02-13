@@ -4,7 +4,7 @@
 # Author: Revanth
 # Date: 12th-Feb
 #
-# Version: v1
+# Version: v2
 #
 # This script will report the AWS resource usage
 # Pre-Request - Need to Configure AWS CLI before running the script
@@ -18,16 +18,16 @@
 
 # Variables
 buckets="$(aws s3 ls)"
-instances_state="$(aws ec2 describe-instances --query 'Reservations[].Instances[*].{InstanceId: InstanceId, State: State.Name, PublicIpAddress:PublicIpAddress, InstanceType: InstanceType}' --output table)"
+instances_state="$(aws ec2 describe-instances --query 'Reservations[].Instances[*].{"Instance Id": InstanceId, "State of Instance": State.Name, "Public IP Address":PublicIpAddress, "Instance Type": InstanceType}' --output table)"
 Lambda="$(aws lambda list-functions --query 'Functions[*].{FunctionName:FunctionName}' --output table )"
 iamusers="$(aws iam list-users --query 'Users[*].{Users: UserName}' --output table)"
-vpcid="$(aws ec2 describe-vpcs --query 'Vpcs[*].{"VPC ID":VpcId, "CIDR Block":CidrBlock}' --output table)"
+vpcid="$(aws ec2 describe-vpcs --query 'Vpcs[*].{"VPC ID":VpcId, "CIDR Block":CidrBlock, "Default VPC":IsDefault}' --output table)"
 
 
 # List s3 buckets 
 
 echo "list S3 Buckets"
-echo "###########################################################"
+echo "***********************************************************"
 
 
 
@@ -36,23 +36,24 @@ then
     echo "No Buckets available"
 else
     echo "Available buckets are"
+    echo "                                                            "
     echo "$buckets"
 fi
 
 echo "                                                            "
 # List Ec2 Instances
 
-echo "###########################################################"
+echo "***********************************************************"
 echo "List EC2 instance ID"
 
 
 
-echo "###########################################################"
+echo "***********************************************************"
 if [[ -z "$instances_state" ]];
 then
-    echo "No Instancs available"
+    echo "No Instancs are running on your current region"
 else
-    echo "Instances Details as Below"
+    echo "Below are Instances Status for your region"
     echo "                                                            "
     echo "$instances_state"
 fi
@@ -61,26 +62,26 @@ fi
 # List Lambda Function
 echo "                                                            "
 
-echo "###########################################################"
+echo "***********************************************************"
 echo "List Lambda Function"
 
-echo "###########################################################"
+echo "***********************************************************"
 if [[ -z "$Lambda" ]];
 then
     echo "No Lambda functions are available"
 else
-    echo "Below are available Lambda Function"
+    echo "Below are available Lambda Functions"
     echo "                                                            "
     echo "$Lambda"
 fi
-echo "###########################################################"
+echo "***********************************************************"
 
 # List IAM Users
 echo "                                                            "
 
-echo "###########################################################"
+echo "***********************************************************"
 echo "List IAM users"
-echo "###########################################################"
+echo "***********************************************************"
 if [[ -z "$iamusers" ]];
 then
     echo "No Users are available"
@@ -89,15 +90,15 @@ else
     echo "                                                            "
     echo "$iamusers"
 fi
-echo "###########################################################"
+echo "***********************************************************"
 
 # List VPC ID
 echo "                                                            "
 
-echo "###########################################################"
+echo "***********************************************************"
 echo "List VPC ID"
 
-echo "###########################################################"
+echo "***********************************************************"
 if [[ -z "$vpcid" ]];
 then
     echo "No VPCs are available"
@@ -106,4 +107,4 @@ else
     echo "                                                            "
     echo "$vpcid"
 fi
-echo "###########################################################"
+echo "***********************************************************"
