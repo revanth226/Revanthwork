@@ -104,7 +104,7 @@ if [[ -z "$vpcid" ]];
 then
     echo "No VPCs are available"
 else
-    echo "Below are available VPCs"
+    echo "Below are available VPCs for your working region"
     echo "                                                            "
     echo "$vpcid"
 fi
