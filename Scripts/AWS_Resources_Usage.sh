@@ -7,6 +7,7 @@
 # Version: v1
 #
 # This script will report the AWS resource usage
+# Pre-Request - Need to Configure AWS CLI before running the script
 #############################
 
 # AWS S3
@@ -17,12 +18,11 @@
 
 # Variables
 buckets="$(aws s3 ls)"
-#instance_id="$(aws ec2 describe-instances | jq '.Reservations[].Instances[].InstanceId')"
 instances_state="$(aws ec2 describe-instances --query 'Reservations[].Instances[*].{InstanceId: InstanceId, State: State.Name, PublicIpAddress:PublicIpAddress, InstanceType: InstanceType}' --output table)"
-Lambda="$(aws lambda list-functions | jq '.Functions[].FunctionName')"
-iamusers="$(aws iam list-users | jq '.Users[].UserName')"
-vpcid="$(aws ec2 describe-vpcs | jq '.Vpcs[].VpcId')"
-#status="$(aws ec2 describe-instances | jq '.Reservations[].Instances[].State' | grep Name | cut -d: -f2 | cut -b 3-9)"
+Lambda="$(aws lambda list-functions --query 'Functions[*].{FunctionName:FunctionName}' --output table )"
+iamusers="$(aws iam list-users --query 'Users[*].{Users: UserName}' --output table)"
+vpcid="$(aws ec2 describe-vpcs --query 'Vpcs[*].{"VPC ID":VpcId, "CIDR Block":CidrBlock}' --output table)"
+
 
 # List s3 buckets 
 
@@ -44,8 +44,7 @@ echo "                                                            "
 
 echo "###########################################################"
 echo "List EC2 instance ID"
-#aws ec2 describe-instances | grep -i InstanceId | cut -d: -f2|cut -b 3-21
-#aws ec2 describe-instances | jq '.Reservations[].Instances[].InstanceId'
+
 
 
 echo "###########################################################"
@@ -81,7 +80,6 @@ echo "                                                            "
 
 echo "###########################################################"
 echo "List IAM users"
-#aws iam list-users | jq '.Users[].UserName'
 echo "###########################################################"
 if [[ -z "$iamusers" ]];
 then
