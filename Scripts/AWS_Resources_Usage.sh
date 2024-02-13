@@ -18,7 +18,7 @@
 # Variables
 buckets="$(aws s3 ls)"
 #instance_id="$(aws ec2 describe-instances | jq '.Reservations[].Instances[].InstanceId')"
-instances_state="$(aws ec2 describe-instances --query 'Reservations[].Instances[*].{InstanceId: InstanceId, State: State.Name, InstanceType: InstanceType}')"
+instances_state="$(aws ec2 describe-instances --query 'Reservations[].Instances[*].{InstanceId: InstanceId, State: State.Name, PublicIpAddress:PublicIpAddress, InstanceType: InstanceType}' --output table)"
 Lambda="$(aws lambda list-functions | jq '.Functions[].FunctionName')"
 iamusers="$(aws iam list-users | jq '.Users[].UserName')"
 vpcid="$(aws ec2 describe-vpcs | jq '.Vpcs[].VpcId')"
@@ -53,7 +53,7 @@ if [[ -z "$instances_state" ]];
 then
     echo "No Instancs available"
 else
-    echo "Instances Status as Below"
+    echo "Instances Details as Below"
     echo "                                                            "
     echo "$instances_state"
 fi
